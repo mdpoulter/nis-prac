@@ -40,6 +40,8 @@ git add .                           # or git add <file>
 git commit -m "Commit message"
 ```
 
+Ensure that you only add and change things that you are working on. Do not be tempted to fix some other things that you see along the way...
+
 You can also push it to the remote repository to keep your branch backed up. The first time you do this, you will need to run:
 
 ```sh
@@ -65,6 +67,9 @@ Bug fixes can be done in almost exactly the same way, however please name your b
 ```sh
 git checkout -b bugfix/bugfix-name
 ```
+
+Again, ensure that you only add and change things that you are working on. Do not be tempted to fix some other things that you see along the way...
+
 ## Testing
 
 `JUnit` is the test framework used for this project. `JUnit` is simple to use and has a vast amount of documentation available. 
