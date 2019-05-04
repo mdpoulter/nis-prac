@@ -20,7 +20,7 @@ cd nis-prac
 ```
 
 ### Adding a feature
-To get started on adding a new feature, first checkout and pull master:
+To get started on adding a new feature, first create a new issue on GitHub describing the feature. Then, on your machine, checkout and pull master:
 
 ```sh
 git checkout master
@@ -54,9 +54,11 @@ For future pushes however, you can simply run:
 git push origin
 ```
 
-Finally, once your feature is complete, all the tests are still passing, and you have pushed to origin, you can create a pull request on Github.
+Finally, once your feature is complete, all the tests are still passing, and you have pushed to origin, you can create a pull request on GitHub.
 
-Navigate to the repository on Github and you’ll see that your branch should be listed at the top with a useful "Compare & pull request" button. Click it! Make sure to set the base to `master` and provide a little bit of context in the pull request before submitting it.
+Navigate to the repository on GitHub and you’ll see that your branch should be listed at the top with a useful "Compare & pull request" button. Click it! Make sure to set the base to `master` and provide a little bit of context in the pull request.
+
+**Important**: Include "Closes #`<num>`" in the description of the pull request where `<num>` refers to the GitHub issue number.
 
 Once submitted, the pull request (currently) requires approval from 2 other contributors before it can be merged into the `master` branch so let us know on the WhatsApp group to get on that.
 
