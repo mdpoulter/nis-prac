@@ -100,8 +100,9 @@ We will use javadocs in order to create and maintain documentation for all our c
 ```java
 /**
   * Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+  * 
   * @author John Doe
-  * @version 07/08/2018
+  * @version 2019/04/25
   */
 public class foo{
   // example
@@ -113,6 +114,7 @@ The beginning of the class has a brief description - *Lorem ipsum* etc, the writ
 ```java
 /**
   * Lorem ipsum dolor sit amet, consectetur adipiscing...
+  * 
   * @param foo the variable fizzbuzz takes
   * @return the string and FizzBuzz
   */
