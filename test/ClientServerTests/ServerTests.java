@@ -11,16 +11,20 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * The server application tests
+ *
+ * @author Matthew Poulter
+ * @version 2019/05/06
+ */
 class ServerTests {
     private PrintStream originalSystemOut;
     private ByteArrayOutputStream systemOutContent;
 
     @BeforeEach
     void redirectSystemOutStream() {
-
         originalSystemOut = System.out;
 
-        // given
         systemOutContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(systemOutContent));
     }
@@ -30,6 +34,9 @@ class ServerTests {
         System.setOut(originalSystemOut);
     }
 
+    /**
+     * Test: Server displays 'Started' when started
+     */
     @Test
     @DisplayName("Server displays 'Started' when started")
     void server_displays_started_message() {

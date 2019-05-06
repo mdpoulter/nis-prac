@@ -58,3 +58,6 @@ hs_err_pid*
 
 # Allow lib folder
 !/lib/*.jar
+
+# Allow docs folder
+!/docs/*.zip
