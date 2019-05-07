@@ -22,7 +22,7 @@ class ServerTestHelpers {
         }
     }
 
-    static void waitSecond() {
+    static void smallWait() {
         try {
             Thread.sleep(200);
         } catch (InterruptedException ignored) {
