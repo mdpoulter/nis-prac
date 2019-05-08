@@ -12,6 +12,9 @@ public class Client {
             String line;
             while (!exit && (line = br.readLine()) != null) {
                 System.out.print("> ");
+
+                // TODO: Encode
+
                 os.write(line + "\n");
                 os.flush();
                 if (line.equals("exit")) {
