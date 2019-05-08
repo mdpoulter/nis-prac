@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.*;
 import java.net.Socket;
 
+import static ClientServerTests.ServerTestHelpers.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,14 +31,14 @@ class ServerTests {
         systemOutContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(systemOutContent));
 
-        t = new Thread(new ServerTestHelpers.ServerThread());
+        t = new Thread(new ServerThread());
         t.start();
-        ServerTestHelpers.smallWait();
+        smallWait();
     }
 
     @AfterEach
     void restoreSystemOutStream() {
-        ServerTestHelpers.closeServer();
+        closeServer();
         System.setOut(originalSystemOut);
     }
 
@@ -50,7 +51,7 @@ class ServerTests {
     @Test
     @DisplayName("Server listens on port 12345")
     void server_listens_on_correct_port() {
-        assertTrue(ServerTestHelpers.serverListeningOn("localhost", 12345));
+        assertTrue(serverListeningOn("localhost", 12345));
     }
 
     @Test
@@ -62,8 +63,8 @@ class ServerTests {
         } catch (IOException ignored) {
         }
 
-        ServerTestHelpers.smallWait();
-        assertFalse(ServerTestHelpers.serverListeningOn("localhost", 12345));
+        smallWait();
+        assertFalse(serverListeningOn("localhost", 12345));
     }
 
     @ParameterizedTest
