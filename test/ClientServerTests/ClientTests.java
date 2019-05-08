@@ -4,6 +4,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,7 +47,6 @@ class ClientTests {
 
         System.setOut(originalSystemOut);
         System.setIn(originalSystemIn);
-        System.out.println(systemOutContent);
     }
 
     @Test
@@ -72,30 +74,32 @@ class ClientTests {
         assertFalse(client.isAlive());
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("Client sends exact message to server")
-    void client_sends_message_to_server() {
+    @ValueSource(strings = {"Lorem ipsum", "More text...", "CAPITALS", "lowercase", "12345", "!£$%^&*()"})
+    void client_sends_message_to_server(String message) {
         sendInput("localhost\n" +
-            "message\n");
+            message + "\n");
 
         client.start();
         ClientTestHelpers.smallWait();
 
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains("message"));
+        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains(message));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("Client sends messages in correct order to server")
-    void client_sends_message_in_order_to_server() {
+    @CsvSource({"Lorem ipsum,More text...", "CAPITALS,lowercase", "12345,!£$%^&*()"})
+    void client_sends_message_in_order_to_server(String message1, String message2) {
         sendInput("localhost\n" +
-            "message1\n" +
-            "message2\n");
+            message1 + "\n" +
+            message2 + "\n");
 
         client.start();
         ClientTestHelpers.smallWait();
 
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains("message1"));
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains("message2"));
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().indexOf("message1") < ClientTestHelpers.ServerTestThread.getReceivedText().indexOf("message2"));
+        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains(message1));
+        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains(message2));
+        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().indexOf(message1) < ClientTestHelpers.ServerTestThread.getReceivedText().indexOf(message2));
     }
 }
