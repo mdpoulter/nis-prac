@@ -1,9 +1,6 @@
 package ClientServerTests;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -13,9 +10,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import static ClientServerTests.ClientTestHelpers.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class ClientTests {
     private PrintStream originalSystemOut;
     private ByteArrayOutputStream systemOutContent;
@@ -30,10 +29,10 @@ class ClientTests {
         systemOutContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(systemOutContent));
 
-        client = new Thread(new ClientTestHelpers.ClientThread());
-        Thread server = new Thread(new ClientTestHelpers.ServerTestThread());
+        client = new Thread(new ClientThread());
+        Thread server = new Thread(new ServerTestThread());
         server.start();
-        ClientTestHelpers.smallWait();
+        smallWait();
     }
 
     private void sendInput(String data) {
@@ -42,8 +41,8 @@ class ClientTests {
 
     @AfterEach
     void finishTest() {
-        ClientTestHelpers.ClientThread.close();
-        ClientTestHelpers.ServerTestThread.close();
+        ClientThread.close();
+        ServerTestThread.close();
 
         System.setOut(originalSystemOut);
         System.setIn(originalSystemIn);
@@ -55,11 +54,11 @@ class ClientTests {
         sendInput("localhost\n");
 
         client.start();
-        ClientTestHelpers.smallWait();
+        smallWait();
 
         assertTrue(systemOutContent.toString().startsWith("Server: "));
-        ClientTestHelpers.smallWait();
-        assertTrue(ClientTestHelpers.ServerTestThread.isConnected());
+        smallWait();
+        assertTrue(ServerTestThread.isConnected());
     }
 
     @Test
@@ -69,7 +68,7 @@ class ClientTests {
             "exit\n");
 
         client.start();
-        ClientTestHelpers.smallWait();
+        smallWait();
 
         assertFalse(client.isAlive());
     }
@@ -82,9 +81,9 @@ class ClientTests {
             message + "\n");
 
         client.start();
-        ClientTestHelpers.smallWait();
+        smallWait();
 
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains(message));
+        assertTrue(ServerTestThread.getReceivedText().contains(message));
     }
 
     @ParameterizedTest
@@ -96,10 +95,10 @@ class ClientTests {
             message2 + "\n");
 
         client.start();
-        ClientTestHelpers.smallWait();
+        smallWait();
 
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains(message1));
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().contains(message2));
-        assertTrue(ClientTestHelpers.ServerTestThread.getReceivedText().indexOf(message1) < ClientTestHelpers.ServerTestThread.getReceivedText().indexOf(message2));
+        assertTrue(ServerTestThread.getReceivedText().contains(message1));
+        assertTrue(ServerTestThread.getReceivedText().contains(message2));
+        assertTrue(ServerTestThread.getReceivedText().indexOf(message1) < ServerTestThread.getReceivedText().indexOf(message2));
     }
 }
