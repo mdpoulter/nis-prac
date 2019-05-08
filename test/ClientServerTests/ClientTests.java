@@ -14,6 +14,12 @@ import static ClientServerTests.ClientTestHelpers.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * The client application tests
+ *
+ * @author Matthew Poulter
+ * @version 2019/05/08
+ */
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class ClientTests {
     private PrintStream originalSystemOut;
