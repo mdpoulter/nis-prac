@@ -2,6 +2,7 @@ package ClientServerTests;
 
 import ClientServer.Server;
 
+import java.io.IOException;
 import java.net.Socket;
 
 class ServerTestHelpers {
@@ -34,6 +35,14 @@ class ServerTestHelpers {
         @Override
         public void run() {
             Server.main(null);
+        }
+    }
+
+    static void closeServer() {
+        try {
+            Server.serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
