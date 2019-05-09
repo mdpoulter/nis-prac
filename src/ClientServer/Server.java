@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * The server application
@@ -14,13 +15,15 @@ import java.net.Socket;
  */
 public class Server {
 
+    public static ServerSocket serverSocket;
+
     /**
      * Starting up the server.
      *
      * @param args The arguments
      */
     public static void main(String[] args) {
-        ServerSocket serverSocket = null;
+        serverSocket = null;
         Socket chatSocket = null;
         BufferedReader is = null;
 
@@ -45,6 +48,7 @@ public class Server {
                     // TODO: Decode
                 }
             }
+        } catch (SocketException ignored) {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
