@@ -2,6 +2,7 @@ package ClientServerTests;
 
 import ClientServer.Server;
 
+import java.io.IOException;
 import java.net.Socket;
 
 class ServerTestHelpers {
@@ -22,7 +23,7 @@ class ServerTestHelpers {
         }
     }
 
-    static void waitSecond() {
+    static void smallWait() {
         try {
             Thread.sleep(200);
         } catch (InterruptedException ignored) {
@@ -34,6 +35,14 @@ class ServerTestHelpers {
         @Override
         public void run() {
             Server.main(null);
+        }
+    }
+
+    static void closeServer() {
+        try {
+            Server.serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
