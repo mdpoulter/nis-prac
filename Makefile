@@ -1,9 +1,9 @@
 #############################################
 #											#
-# Assignment 2 Makefile						#
+# NIS Makefile						#
 #											#
 # @author Matthew Poulter (PLTMAT001)		#
-# @version 1.0, 24 April 2017				#
+# @version 1.0, 13 May 2019				#
 #											#
 #############################################
 
@@ -24,8 +24,14 @@ TEST_F := $(wildcard test/*.java)
 
 LIST := $(SRC_F:$(SRC)/%.java=$(BIN)/%.class)
 
-# Default
+# Default - make
 all: setup $(LIST) complete
+
+# Make server
+#server:
+
+#Make client
+#client: 
 
 # Clean
 clean:
@@ -51,24 +57,23 @@ docs: all
 	@echo Complete!
 
 # Test
-junit: all
-	@echo Running tests...
-	@$(JAVAC) -cp $(BIN):$(TEST):$(LIB) -sourcepath $(TEST) -g -d $(TEST) $(TEST)/SearchAVLTest.java
-	@$(JAVA) -ea -cp $(BIN):$(TEST):$(LIB) org.junit.runner.JUnitCore SearchAVLTest
+test: 
+	@echo Running tests
+	$JAVA_HOME/bin/java -jar lib\junit-platform-console-standalone-1.4.0.jar -cp "out\production\nis-prac;out\test\nis-prac" -c ClientServerTests.ServerTests
 	@echo Complete!
+#junit: all
+	#@echo Running tests...
+	#@$(JAVAC) -cp $(BIN):$(TEST):$(LIB) -sourcepath $(TEST) -g -d $(TEST) $(TEST)/SearchAVLTest.java
+	#@$(JAVA) -ea -cp $(BIN):$(TEST):$(LIB) org.junit.runner.JUnitCore SearchAVLTest
+	#@echo Complete!
 	
 # Coverage
 jacoco: junit
 	@echo Running coverage...
-	@$(JAVA) -ea -javaagent:$(JCA) -cp $(BIN):$(TEST):$(LIB) org.junit.runner.JUnitCore SearchAVLTest
+	@$(JAVA) -ea -javaagent:$(JCA) -cp $(BIN):$(TEST):$(LIB) org.junit.runner.JUnitCore ClientServerTests.ServerTests
 	@$(JAVA) -cp $(BIN):$(TEST):$(LIB) Report --reporttype html --target coverage .
 	@echo Complete!
 
 # Run
-%.run:
-	@$(TIME) --format="Duration: %E" $(JAVA) -cp $(BIN) $(patsubst %.run,%,$@)
-
-### CUSTOM FOR THIS ASSIGNENT ###
-%.gen:
-	@$(JAVA) -cp $(BIN) GenQuery $(patsubst %.gen,%,$@)
-	@echo Generated $(patsubst %.gen,%,$@) queries.
+#%.run:
+	#@$(TIME) --format="Duration: %E" $(JAVA) -cp $(BIN) $(patsubst %.run,%,$@)
