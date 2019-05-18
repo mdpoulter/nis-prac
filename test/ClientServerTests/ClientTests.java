@@ -11,8 +11,13 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import static ClientServerTests.ClientTestHelpers.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.security.Security;
+import java.security.SecureRandom;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import javax.crypto.Cipher;
+import javax.crypto.spec.*;
 
 /**
  * The client application tests
@@ -90,6 +95,40 @@ class ClientTests {
         smallWait();
 
         assertTrue(ServerTestThread.getReceivedText().contains(message));
+    }
+
+    @Test
+    @DisplayName("Test basic encryption and decryption")
+    void encrypt_the_decrypt(){
+
+        Security.addProvider(new BouncyCastleProvider());
+        SecureRandom secureRandom = new SecureRandom();
+
+        byte[] keyBytes = new byte[16];
+        secureRandom.nextBytes(keyBytes);
+
+        String algorithm  = "AES";
+        SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+        IvParameterSpec ivspec = new IvParameterSpec(keyBytes);
+        String orl = "Hello World";
+        String plainText = "";
+        try{
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key, ivspec);//Sets up cipher to encrypt
+
+
+            byte[] plainBytes = orl.getBytes();
+            byte[] cipherText = cipher.doFinal(plainBytes);
+
+            cipher.init(Cipher.DECRYPT_MODE, key, ivspec); //Sets up cipher to decrypt
+
+            plainText = new String(cipher.doFinal(cipherText));
+            System.out.println(plainText+" "+orl);
+        }catch(Exception e){
+            System.out.println("Failed to create Cipher: "+e.toString());
+        }
+
+        assertEquals(plainText,orl);
     }
 
     @ParameterizedTest
