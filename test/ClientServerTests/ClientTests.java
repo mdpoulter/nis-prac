@@ -88,13 +88,17 @@ class ClientTests {
         String hashed_message1 = PGP.hashing(message1);
         String message2 = "Hash that";
         String hashed_message2 = PGP.hashing(message2);
+        String message3 = "Hash this";
+        String hashed_message3 = PGP.hashing(message3);
 
-        System.out.println(message1+" hashes to "+hashed_message1);
-        System.out.println(message2+" hashes to "+hashed_message2);
+        System.out.println(message1+" \thashes to\t "+hashed_message1);
+        System.out.println(message2+" \thashes to\t "+hashed_message2);
+        System.out.println(message3+" \thashes to\t "+hashed_message3);
 
-        assertFalse(message1.equalsIgnoreCase(hashed_message1));
-        assertFalse(message2.equalsIgnoreCase(hashed_message2));
-        assertFalse(hashed_message1.equals(hashed_message2));
+        assertFalse(message1.equalsIgnoreCase(hashed_message1)); //test hash different to input
+        assertFalse(message2.equalsIgnoreCase(hashed_message2)); //test next hash different to next input
+        assertFalse(hashed_message1.equals(hashed_message2)); //test hashing different inputs yields different hashes
+        assertTrue(hashed_message1.equals(hashed_message3)); //test hashing same input yields same hash
     }
 
     @ParameterizedTest
