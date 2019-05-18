@@ -1,5 +1,6 @@
 package ClientServerTests;
 
+import ClientServer.SymmetricEncryptor;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -100,34 +101,22 @@ class ClientTests {
     @Test
     @DisplayName("Test basic encryption and decryption")
     void encrypt_the_decrypt(){
-
-        Security.addProvider(new BouncyCastleProvider());
-        SecureRandom secureRandom = new SecureRandom();
-
-        byte[] keyBytes = new byte[16];
-        secureRandom.nextBytes(keyBytes);
-
-        String algorithm  = "AES";
-        SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
-        IvParameterSpec ivspec = new IvParameterSpec(keyBytes);
         String orl = "Hello World";
-        String plainText = "";
-        try{
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, key, ivspec);//Sets up cipher to encrypt
+        SymmetricEncryptor encryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+        String plainText = encryptor.decrypt(encryptor.encrypt(orl));
+        assertEquals(plainText,orl);
+    }
 
-
-            byte[] plainBytes = orl.getBytes();
-            byte[] cipherText = cipher.doFinal(plainBytes);
-
-            cipher.init(Cipher.DECRYPT_MODE, key, ivspec); //Sets up cipher to decrypt
-
-            plainText = new String(cipher.doFinal(cipherText));
-            System.out.println(plainText+" "+orl);
-        }catch(Exception e){
-            System.out.println("Failed to create Cipher: "+e.toString());
-        }
-
+    @Test
+    @DisplayName("Decrypt cipher with given key")
+    void decrypt_cipher_with_key(){
+        SymmetricEncryptor encryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+        String orl = "Hello World";
+        String cipherText = encryptor.encrypt(orl);
+        byte[] key = encryptor.getKey();
+        decryptor.setKey(key);
+        String plainText = decryptor.decrypt(cipherText);
         assertEquals(plainText,orl);
     }
 
