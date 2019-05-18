@@ -28,6 +28,8 @@ public class Client {
                 System.out.print("> ");
 
                 // TODO: Encode
+                line = PGP.hashing(line); //hash message
+
 
                 os.write(line + "\n");
                 os.flush();

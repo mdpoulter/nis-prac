@@ -1,5 +1,6 @@
 package ClientServerTests;
 
+import ClientServer.PGP;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -52,6 +53,7 @@ class ClientTests {
 
         System.setOut(originalSystemOut);
         System.setIn(originalSystemIn);
+        //System.out.println(systemOutContent.toString());
     }
 
     @Test
@@ -77,6 +79,22 @@ class ClientTests {
         smallWait();
 
         assertFalse(client.isAlive());
+    }
+
+    @Test
+    @DisplayName("Hashing function hashes message")
+    void hashing_function_hashes_message(){ //move this to separate testing script?
+        String message1 = "Hash this";
+        String hashed_message1 = PGP.hashing(message1);
+        String message2 = "Hash that";
+        String hashed_message2 = PGP.hashing(message2);
+
+        System.out.println(message1+" hashes to "+hashed_message1);
+        System.out.println(message2+" hashes to "+hashed_message2);
+
+        assertFalse(message1.equalsIgnoreCase(hashed_message1));
+        assertFalse(message2.equalsIgnoreCase(hashed_message2));
+        assertFalse(hashed_message1.equals(hashed_message2));
     }
 
     @ParameterizedTest
