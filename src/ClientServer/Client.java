@@ -29,8 +29,9 @@ public class Client {
                 System.out.print("> ");
 
                 // TODO: Encode
-                String cipherText = encryptor.encrypt(line+"\n");
-                cipherText+="<key>"+new String(encryptor.getKey())+"<key>";
+                String cipherText = encryptor.encrypt(line+"\n"); //Encrypt message
+                String key = encryptor.getKey(); //This must be encrypted using the public key of the receiver
+                cipherText+="<key>"+key+"<key>"; //Add key to message
 
                 os.write(cipherText);
                 os.flush();

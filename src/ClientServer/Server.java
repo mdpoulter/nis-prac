@@ -41,9 +41,10 @@ public class Server {
 
                 String message;
                 while ((message = is.readLine()) != null) {
-                    String[] msg = message.split("<key>");
-                    decryptor.setKey(msg[1]);
-                    message = decryptor.decrypt(msg[0]);
+                    String[] msg = message.split("<key>"); //Split into key and message
+                    //key must be decrypted using servers private key
+                    decryptor.setKey(msg[1]);// set the session key
+                    message = decryptor.decrypt(msg[0]); //decrypt message
                     System.out.println("Message received: " + message);
 
                     running = !message.equals("exit");

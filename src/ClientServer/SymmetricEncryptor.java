@@ -7,6 +7,14 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.*;
 import java.util.Base64;
 
+/*
+ * Contains functions to perform symmetric encryption and decryption using of the BouncyCastle encryption module.
+ *
+ * @authur Jarryd Dunn
+ * @version 1.0
+ * @since 2019/05/19
+ */
+
 public class SymmetricEncryptor{
     private Cipher cipher;
     private SecureRandom secureRandom;
@@ -17,17 +25,8 @@ public class SymmetricEncryptor{
 
     /*
      *Constructor to generate Symmetric Encryption object.
-     */
-    public SymmetricEncryptor(String encryptionAlg, String keyAlg, byte[] keyBytes){
-        Security.addProvider(new BouncyCastleProvider());
-        this.keyAlgorithm = keyAlg;
-        this.encryptionAlgorithm = encryptionAlg;
-        ivspec = new IvParameterSpec(keyBytes);
-        key = new SecretKeySpec(keyBytes, keyAlg);
-    }
-
-    /*
-     *Constructor to generate Symmetric Encryption object, using an exising key.
+     * @param encryptionAlg Name of the encryption algorithm to be used by the cipher.
+     * @param keyAlg Name of the algorithm used to generate keys.
      */
     public SymmetricEncryptor(String encryptionAlg, String keyAlg){
         Security.addProvider(new BouncyCastleProvider());
@@ -42,23 +41,34 @@ public class SymmetricEncryptor{
 
     /*
      * Sets the values of the key
+     * @param keyBytes The new key to be used.
      */
     public void setKey(byte[] keyBytes){
         this.ivspec = new IvParameterSpec(keyBytes);
         this.key = new SecretKeySpec(keyBytes,this.keyAlgorithm);
     }
 
+    /*
+     * Updates the encryption key to the given key.
+     * @param keyStr String representation of new key to be used.
+     */
     public void setKey(String keyStr){
         byte[] keyBytes = Base64.getDecoder().decode(keyStr);
         setKey(keyBytes);
     }
 
+    /*
+     * Returns the key.
+     * @return String This returns the key currently being used by the cipher.
+     */
     public String getKey(){
         return Base64.getEncoder().encodeToString(this.key.getEncoded());
     }
 
     /*
      * Encrypt a string
+     * @param plainText This is the string to be encrypted.
+     * @return String Returns the encrypted string.
      */
     public String encrypt(String plainText){
         try{
@@ -73,6 +83,8 @@ public class SymmetricEncryptor{
 
     /*
      * Decrypt a string
+     * @param cipherText This is the string to be decrypted.
+     * @return String This is the decrypted string.
      */
     public String decrypt(String cipherText){
         try{
