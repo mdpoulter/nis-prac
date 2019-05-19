@@ -130,12 +130,25 @@ class ClientTests {
         sendInput("localhost\n" +
             message1 + "\n" +
             message2 + "\n");
-        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
-        client.start();
-        smallWait();
 
-        assertTrue(ServerTestThread.getReceivedText().contains(message1));
-        assertTrue(ServerTestThread.getReceivedText().contains(message2));
-        assertTrue(ServerTestThread.getReceivedText().indexOf(message1) < ServerTestThread.getReceivedText().indexOf(message2));
+        client.start();
+        for (int i=0;i<10;++i) {
+            smallWait();
+        }
+        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+
+        String rcv = ServerTestThread.getReceivedText();
+        StringBuilder plainBuild = new StringBuilder();
+        String[] msgs = rcv.split("<end>");
+        for (String msg : msgs) {
+            String[] msgKey = msg.split("<key>"); //Split into key and message
+            //key must be decrypted using servers private key
+            decryptor.setKey(msgKey[1]);// set the session key
+            plainBuild.append(decryptor.decrypt(msgKey[0])); //decrypt message
+        }
+        String plain = plainBuild.toString();
+        assertTrue(plain.contains(message1));
+        assertTrue(plain.contains(message2));
+        assertTrue(plain.indexOf(message1) < plain.indexOf(message2));
     }
 }

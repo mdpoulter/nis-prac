@@ -40,11 +40,18 @@ public class Server {
                 is = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 
                 String message;
+
                 while ((message = is.readLine()) != null) {
-                    String[] msg = message.split("<key>"); //Split into key and message
-                    //key must be decrypted using servers private key
-                    decryptor.setKey(msg[1]);// set the session key
-                    message = decryptor.decrypt(msg[0]); //decrypt message
+                    String[] msgs = message.split("<end>");//splits into messages
+                    StringBuilder msgBuilder = new StringBuilder();
+                    for (String msg : msgs) {
+                        String[] msgKey = msg.split("<key>"); //Split into key and message
+                        //key must be decrypted using servers private key
+                        decryptor.setKey(msgKey[1]);// set the session key
+                        msgBuilder.append(decryptor.decrypt(msgKey[0])); //decrypt message
+                    }
+                    message = msgBuilder.toString();
+
                     System.out.println("Message received: " + message);
 
                     running = !message.equals("exit");

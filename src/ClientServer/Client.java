@@ -33,7 +33,7 @@ public class Client {
                 String key = encryptor.getKey(); //This must be encrypted using the public key of the receiver
                 cipherText+="<key>"+key+"<key>"; //Add key to message
 
-                os.write(cipherText);
+                os.write(cipherText+"<end>");
                 os.flush();
                 if (line.equals("exit")) {
                     break;
