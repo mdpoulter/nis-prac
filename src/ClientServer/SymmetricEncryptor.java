@@ -22,7 +22,7 @@ public class SymmetricEncryptor{
         Security.addProvider(new BouncyCastleProvider());
         this.keyAlgorithm = keyAlg;
         this.encryptionAlgorithm = encryptionAlg;
-        //ivspec = new IvParameterSpec(keyBytes);
+        ivspec = new IvParameterSpec(keyBytes);
         key = new SecretKeySpec(keyBytes, keyAlg);
     }
 
