@@ -29,7 +29,7 @@ public class Server {
 
         try {
             serverSocket = new ServerSocket(12345);
-
+            SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
             System.out.println("Server started");
             System.out.println("Waiting for messages...");
 
@@ -41,6 +41,9 @@ public class Server {
 
                 String message;
                 while ((message = is.readLine()) != null) {
+                    String[] msg = message.split("<key>");
+                    decryptor.setKey(msg[1]);
+                    message = decryptor.decrypt(msg[0]);
                     System.out.println("Message received: " + message);
 
                     running = !message.equals("exit");

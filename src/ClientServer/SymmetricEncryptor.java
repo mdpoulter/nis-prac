@@ -7,7 +7,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.*;
 import java.util.Base64;
 
-public class SymmetricEncryptor {
+public class SymmetricEncryptor{
     private Cipher cipher;
     private SecureRandom secureRandom;
     private SecretKeySpec key;
@@ -22,7 +22,7 @@ public class SymmetricEncryptor {
         Security.addProvider(new BouncyCastleProvider());
         this.keyAlgorithm = keyAlg;
         this.encryptionAlgorithm = encryptionAlg;
-        ivspec = new IvParameterSpec(keyBytes);
+        //ivspec = new IvParameterSpec(keyBytes);
         key = new SecretKeySpec(keyBytes, keyAlg);
     }
 
@@ -33,7 +33,11 @@ public class SymmetricEncryptor {
         Security.addProvider(new BouncyCastleProvider());
         this.keyAlgorithm = keyAlg;
         this.encryptionAlgorithm = encryptionAlg;
-        newKey();
+        this.secureRandom = new SecureRandom();
+        byte[] keyBytes = new byte[16];
+        this.secureRandom.nextBytes(keyBytes);
+        ivspec = new IvParameterSpec(keyBytes);
+        key = new SecretKeySpec(keyBytes, this.keyAlgorithm);
     }
 
     /*
@@ -44,22 +48,13 @@ public class SymmetricEncryptor {
         this.key = new SecretKeySpec(keyBytes,this.keyAlgorithm);
     }
 
-    /*
-     * Generates a new key
-     */
-    public void newKey(){
-        this.secureRandom = new SecureRandom();
-        byte[] keyBytes = new byte[16];
-        this.secureRandom.nextBytes(keyBytes);
-        ivspec = new IvParameterSpec(keyBytes);
-        this.key = new SecretKeySpec(keyBytes, this.keyAlgorithm);
+    public void setKey(String keyStr){
+        byte[] keyBytes = Base64.getDecoder().decode(keyStr);
+        setKey(keyBytes);
     }
 
-    /*
-     * Returns the key used by the cipher.
-     */
-    public byte[] getKey(){
-        return this.key.getEncoded();
+    public String getKey(){
+        return Base64.getEncoder().encodeToString(this.key.getEncoded());
     }
 
     /*

@@ -30,7 +30,7 @@ public class Client {
 
                 // TODO: Encode
                 String cipherText = encryptor.encrypt(line+"\n");
-                cipherText+="|"+new String(encryptor.getKey());
+                cipherText+="<key>"+new String(encryptor.getKey())+"<key>";
 
                 os.write(cipherText);
                 os.flush();

@@ -91,11 +91,14 @@ class ClientTests {
     void client_sends_message_to_server(String message) {
         sendInput("localhost\n" +
             message + "\n");
-
+        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
         client.start();
         smallWait();
-
-        assertTrue(ServerTestThread.getReceivedText().contains(message));
+        String rcvMsg = ServerTestThread.getReceivedText();
+        String[] msg = rcvMsg.split("<key>");
+        decryptor.setKey(msg[1]);
+        rcvMsg = decryptor.decrypt(msg[0]);
+        assertTrue(rcvMsg.contains(message));
     }
 
     @Test
@@ -114,7 +117,7 @@ class ClientTests {
         SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
         String orl = "Hello World";
         String cipherText = encryptor.encrypt(orl);
-        byte[] key = encryptor.getKey();
+        String key = encryptor.getKey();
         decryptor.setKey(key);
         String plainText = decryptor.decrypt(cipherText);
         assertEquals(plainText,orl);
@@ -127,7 +130,7 @@ class ClientTests {
         sendInput("localhost\n" +
             message1 + "\n" +
             message2 + "\n");
-
+        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
         client.start();
         smallWait();
 
