@@ -22,14 +22,17 @@ public class Client {
      */
     public static void main(String[] args) {
         System.out.print("Server: ");
+        SymmetricEncryptor encryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); Socket chatSocket = new Socket(br.readLine(), 12345); BufferedWriter os = new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream()))) {
             String line;
             while (!exit && (line = br.readLine()) != null) {
                 System.out.print("> ");
 
                 // TODO: Encode
+                String cipherText = encryptor.encrypt(line+"\n");
+                cipherText+="|"+new String(encryptor.getKey());
 
-                os.write(line + "\n");
+                os.write(cipherText);
                 os.flush();
                 if (line.equals("exit")) {
                     break;
