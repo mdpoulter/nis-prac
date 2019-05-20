@@ -23,19 +23,32 @@ public class AsymmetricEncryption {
         Security.addProvider(new BouncyCastleProvider());
     }
 
+
+    private final Cipher cipher;
+    private final KeyPair pair;
+
     public AsymmetricEncryption() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        keyGen.initialize(1024);
+        pair = keyGen.generateKeyPair();
+        this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
     }
 
-    public String decrypt(String base64, Key privates) {
-        return null;
+    public String decrypt(String base64, Key privates) throws Exception{
+         cipher.init(Cipher.DECRYPT_MODE, privates);
+        return new String(cipher.doFinal(Base64.getDecoder().decode(base64)));
     }
 
-    public String encrypt(String message, Key publics) {
-        return null;
+    public String encrypt(String message, Key publics) throws Exception{
+        cipher.init(Cipher.ENCRYPT_MODE, publics);
+        return Base64.getEncoder().encodeToString(cipher.doFinal(message.getBytes("UTF-8")));
     }
 
-    public KeyPair getKeyPair(){
-        return null;
+    public KeyPair getKeyPair()throws Exception{
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        keyGen.initialize(1024);
+        KeyPair pair = keyGen.generateKeyPair();
+        return pair;
     }
 
 

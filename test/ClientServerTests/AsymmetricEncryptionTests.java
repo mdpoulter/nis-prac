@@ -12,7 +12,14 @@ import java.security.KeyPairGenerator;
 import java.security.Security;
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+/**
+ * AsymmetricEncryptionTests
+ *
+ * @author Duncan Campbell
+ * @version 1.0
+ * @since 2019/05/20
+ */
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class AsymmetricEncryptionTests {
@@ -27,11 +34,18 @@ class AsymmetricEncryptionTests {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
         keyGen.initialize(1024);
         KeyPair pair = keyGen.generateKeyPair();
-        String encrypted = new AsymmetricEncryption().encrypt("Hello", pair.getPublic());
+        String toBeEncrypted = "Hello";
+        String encrypted = new AsymmetricEncryption().encrypt(toBeEncrypted, pair.getPublic());
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
+
         cipher.init(Cipher.ENCRYPT_MODE, pair.getPublic());
-        String correctEncryption = Base64.getEncoder().encodeToString(cipher.doFinal("Hello".getBytes("UTF-8")));
-        assertTrue(correctEncryption.equals(encrypted));
+        String correctEncryption =  Base64.getEncoder().encodeToString(cipher.doFinal(toBeEncrypted.getBytes("UTF-8")));
+
+        //assertEquals(correctEncryption, encrypted);
+
+        String decrypted = new AsymmetricEncryption().decrypt(encrypted, pair.getPrivate());
+        String correctDencryption = new AsymmetricEncryption().decrypt(correctEncryption, pair.getPrivate());
+        assertEquals(correctDencryption, decrypted);
     }
 
     @Test
@@ -44,7 +58,7 @@ class AsymmetricEncryptionTests {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
         cipher.init(Cipher.DECRYPT_MODE, pair.getPrivate());
         String correctDecryption = new String(cipher.doFinal(Base64.getDecoder().decode(encrypted)));
-        assertTrue(decrypted.equals(correctDecryption));
+        assertEquals(decrypted, correctDecryption);
     }
 
     @Test
@@ -53,7 +67,7 @@ class AsymmetricEncryptionTests {
         KeyPair pair = new AsymmetricEncryption().getKeyPair();
         String encrypted = new AsymmetricEncryption().encrypt("Hello", pair.getPublic());
         String decrypted = new AsymmetricEncryption().decrypt(encrypted, pair.getPrivate());
-        assertTrue(decrypted.equals("Hello"));
+        assertEquals(decrypted,"Hello");
     }
 
 
