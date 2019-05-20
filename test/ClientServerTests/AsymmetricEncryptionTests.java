@@ -35,7 +35,7 @@ class AsymmetricEncryptionTests {
         keyGen.initialize(1024);
         KeyPair pair = keyGen.generateKeyPair();
         String toBeEncrypted = "Hello";
-        String encrypted = new AsymmetricEncryption().encrypt(toBeEncrypted, pair.getPublic());
+        String encrypted = AsymmetricEncryption.encrypt(toBeEncrypted, pair.getPublic());
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
 
         cipher.init(Cipher.ENCRYPT_MODE, pair.getPublic());
@@ -43,8 +43,8 @@ class AsymmetricEncryptionTests {
 
         //assertEquals(correctEncryption, encrypted);
 
-        String decrypted = new AsymmetricEncryption().decrypt(encrypted, pair.getPrivate());
-        String correctDencryption = new AsymmetricEncryption().decrypt(correctEncryption, pair.getPrivate());
+        String decrypted = AsymmetricEncryption.decrypt(encrypted, pair.getPrivate());
+        String correctDencryption = AsymmetricEncryption.decrypt(correctEncryption, pair.getPrivate());
         assertEquals(correctDencryption, decrypted);
     }
 
@@ -52,9 +52,9 @@ class AsymmetricEncryptionTests {
     @DisplayName("Testing Decryption")
     void DecryptionTest() throws Exception{
 
-        KeyPair pair = new AsymmetricEncryption().getKeyPair();
-        String encrypted = new AsymmetricEncryption().encrypt("Hello", pair.getPublic());
-        String decrypted = new AsymmetricEncryption().decrypt(encrypted, pair.getPrivate());
+        KeyPair pair = AsymmetricEncryption.getKeyPair();
+        String encrypted = AsymmetricEncryption.encrypt("Hello", pair.getPublic());
+        String decrypted = AsymmetricEncryption.decrypt(encrypted, pair.getPrivate());
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
         cipher.init(Cipher.DECRYPT_MODE, pair.getPrivate());
         String correctDecryption = new String(cipher.doFinal(Base64.getDecoder().decode(encrypted)));
@@ -64,9 +64,9 @@ class AsymmetricEncryptionTests {
     @Test
     @DisplayName("Testing Encryption and Decryption together")
     void EnncryptionDecryptionTest() throws Exception{
-        KeyPair pair = new AsymmetricEncryption().getKeyPair();
-        String encrypted = new AsymmetricEncryption().encrypt("Hello", pair.getPublic());
-        String decrypted = new AsymmetricEncryption().decrypt(encrypted, pair.getPrivate());
+        KeyPair pair = AsymmetricEncryption.getKeyPair();
+        String encrypted = AsymmetricEncryption.encrypt("Hello", pair.getPublic());
+        String decrypted = AsymmetricEncryption.decrypt(encrypted, pair.getPrivate());
         assertEquals(decrypted,"Hello");
     }
 

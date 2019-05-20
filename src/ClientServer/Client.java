@@ -2,7 +2,8 @@ package ClientServer;
 
 import java.io.*;
 import java.net.Socket;
-
+import java.security.Key;
+import java.security.KeyPair;
 /**
  * The client application
  *
@@ -23,6 +24,17 @@ public class Client {
     public static void main(String[] args) {
         System.out.print("Server: ");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); Socket chatSocket = new Socket(br.readLine(), 12345); BufferedWriter os = new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream()))) {
+
+            //Create public and private key pair
+            KeyPair keyPair = AsymmetricEncryption.getKeyPair();
+
+            //Receive server public key
+            Key serverPublicKey = AsymmetricEncryption.recieveKey(chatSocket);
+
+            //Send Client Public Key
+            AsymmetricEncryption.sendKey(chatSocket, keyPair);
+
+
             String line;
             while (!exit && (line = br.readLine()) != null) {
                 System.out.print("> ");
@@ -36,6 +48,8 @@ public class Client {
                 }
             }
         } catch (IOException ignored) {
+        }catch(Exception e){
+
         }
     }
 }
