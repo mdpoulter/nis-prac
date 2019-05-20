@@ -26,13 +26,13 @@ public class Client {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); Socket chatSocket = new Socket(br.readLine(), 12345); BufferedWriter os = new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream()))) {
 
             //Create public and private key pair
-            KeyPair keyPair = AsymmetricEncryption.getKeyPair();
+            KeyPair clientKeyPair = AsymmetricEncryption.getKeyPair();
 
             //Receive server public key
             Key serverPublicKey = AsymmetricEncryption.recieveKey(chatSocket);
 
             //Send Client Public Key
-            AsymmetricEncryption.sendKey(chatSocket, keyPair);
+            AsymmetricEncryption.sendKey(chatSocket, clientKeyPair);
 
 
             String line;
@@ -40,6 +40,10 @@ public class Client {
                 System.out.print("> ");
 
                 // TODO: Encode
+
+                //String hashEncrypted = AsymmetricEncryption.encrypt(hash, clientKeyPair.getPrivate());
+
+                //String keyEncrypted = AsymmetricEncryption(key, serverPublicKey);
 
                 os.write(line + "\n");
                 os.flush();

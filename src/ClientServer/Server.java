@@ -42,10 +42,10 @@ public class Server {
                 chatSocket = serverSocket.accept();
 
                 //Create public and private key pair
-                KeyPair keyPair = AsymmetricEncryption.getKeyPair();
+                KeyPair serverKeyPair = AsymmetricEncryption.getKeyPair();
 
                 //Send Server Public Key
-                AsymmetricEncryption.sendKey(chatSocket, keyPair);
+                AsymmetricEncryption.sendKey(chatSocket, serverKeyPair);
 
                 //Receive Client Private Key
                 Key clientPublicKey = AsymmetricEncryption.recieveKey(chatSocket);
@@ -55,15 +55,14 @@ public class Server {
                 is = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
                 String message;
                 while ((message = is.readLine()) != null) {
-                    //message = AsymmetricEncryption.decrypt(message, keyPair.getPrivate());
-                    System.out.println("Message received: " + message);
-
-                    running = !message.equals("exit");
-
                     // TODO: Decode
 
+                    //String decryptedKey = AsymmetricEncryption.decrypt(key, serverKeyPair.getPrivate());
 
+                    //String decryptedHash = AsymmetricEncryption.decrypt(hash, clientPublicKey());
 
+                    System.out.println("Message received: " + message);
+                    running = !message.equals("exit");
                 }
             }
         } catch (SocketException ignored) {

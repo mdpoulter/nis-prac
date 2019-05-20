@@ -62,11 +62,20 @@ class AsymmetricEncryptionTests {
     }
 
     @Test
-    @DisplayName("Testing Encryption and Decryption together")
+    @DisplayName("Testing Encryption and Decryption together. Public encryption and private Decryption")
     void EnncryptionDecryptionTest() throws Exception{
         KeyPair pair = AsymmetricEncryption.getKeyPair();
         String encrypted = AsymmetricEncryption.encrypt("Hello", pair.getPublic());
         String decrypted = AsymmetricEncryption.decrypt(encrypted, pair.getPrivate());
+        assertEquals(decrypted,"Hello");
+    }
+
+    @Test
+    @DisplayName("Testing Encryption and Decryption together. Private encryption and public Decryption")
+    void EnncryptionDecryptionTest2() throws Exception{
+        KeyPair pair = AsymmetricEncryption.getKeyPair();
+        String encrypted = AsymmetricEncryption.encrypt("Hello", pair.getPrivate());
+        String decrypted = AsymmetricEncryption.decrypt(encrypted, pair.getPublic());
         assertEquals(decrypted,"Hello");
     }
 
