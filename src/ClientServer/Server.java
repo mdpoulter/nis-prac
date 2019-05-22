@@ -79,6 +79,8 @@ public class Server {
                     } else {
                         System.out.println("Failure in checking confidentiality and authentication!");
                     }
+
+                    System.out.println();
                 }
             }
         } catch (SocketException ignored) {

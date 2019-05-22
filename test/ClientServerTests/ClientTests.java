@@ -86,7 +86,7 @@ class ClientTests {
     void client_sends_message_to_server(String message) {
         sendInput("localhost\n" +
             message + "\n");
-        AES decryptor = new AES("AES/CBC/PKCS5Padding", "AES");
+        AES decryptor = new AES();
         client.start();
         smallWait();
         String rcvMsg = ServerTestThread.getReceivedText();
@@ -100,7 +100,7 @@ class ClientTests {
     @DisplayName("Test basic encryption and decryption")
     void encrypt_the_decrypt(){
         String orl = "Hello World";
-        AES encryptor = new AES("AES/CBC/PKCS5Padding", "AES");
+        AES encryptor = new AES();
         String plainText = encryptor.decrypt(encryptor.encrypt(orl));
         assertEquals(plainText,orl);
     }
@@ -108,8 +108,8 @@ class ClientTests {
     @Test
     @DisplayName("Decrypt cipher with given key")
     void decrypt_cipher_with_key(){
-        AES encryptor = new AES("AES/CBC/PKCS5Padding", "AES");
-        AES decryptor = new AES("AES/CBC/PKCS5Padding", "AES");
+        AES encryptor = new AES();
+        AES decryptor = new AES();
         String orl = "Hello World";
         String cipherText = encryptor.encrypt(orl);
         String key = encryptor.getKey();
@@ -130,7 +130,7 @@ class ClientTests {
         for (int i=0;i<10;++i) {
             smallWait();
         }
-        AES decryptor = new AES("AES/CBC/PKCS5Padding", "AES");
+        AES decryptor = new AES();
 
         String rcv = ServerTestThread.getReceivedText();
         StringBuilder plainBuild = new StringBuilder();

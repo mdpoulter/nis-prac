@@ -74,6 +74,7 @@ public class Client {
                     break;
                 }
 
+                System.out.println();
                 System.out.print("> ");
             }
         } catch (IOException ignored) {
