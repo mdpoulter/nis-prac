@@ -1,6 +1,6 @@
 package ClientServerTests;
 
-import ClientServer.SymmetricEncryptor;
+import ClientServer.AES;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -13,12 +13,6 @@ import java.io.PrintStream;
 
 import static ClientServerTests.ClientTestHelpers.*;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.security.Security;
-import java.security.SecureRandom;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import javax.crypto.Cipher;
-import javax.crypto.spec.*;
 
 /**
  * The client application tests
@@ -91,7 +85,7 @@ class ClientTests {
     void client_sends_message_to_server(String message) {
         sendInput("localhost\n" +
             message + "\n");
-        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+        AES decryptor = new AES("AES/CBC/PKCS5Padding", "AES");
         client.start();
         smallWait();
         String rcvMsg = ServerTestThread.getReceivedText();
@@ -105,7 +99,7 @@ class ClientTests {
     @DisplayName("Test basic encryption and decryption")
     void encrypt_the_decrypt(){
         String orl = "Hello World";
-        SymmetricEncryptor encryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+        AES encryptor = new AES("AES/CBC/PKCS5Padding", "AES");
         String plainText = encryptor.decrypt(encryptor.encrypt(orl));
         assertEquals(plainText,orl);
     }
@@ -113,8 +107,8 @@ class ClientTests {
     @Test
     @DisplayName("Decrypt cipher with given key")
     void decrypt_cipher_with_key(){
-        SymmetricEncryptor encryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
-        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+        AES encryptor = new AES("AES/CBC/PKCS5Padding", "AES");
+        AES decryptor = new AES("AES/CBC/PKCS5Padding", "AES");
         String orl = "Hello World";
         String cipherText = encryptor.encrypt(orl);
         String key = encryptor.getKey();
@@ -135,7 +129,7 @@ class ClientTests {
         for (int i=0;i<10;++i) {
             smallWait();
         }
-        SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+        AES decryptor = new AES("AES/CBC/PKCS5Padding", "AES");
 
         String rcv = ServerTestThread.getReceivedText();
         StringBuilder plainBuild = new StringBuilder();

@@ -2,6 +2,7 @@ package ClientServer;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * The client application
@@ -22,19 +23,26 @@ public class Client {
      */
     public static void main(String[] args) {
         System.out.print("Server: ");
-        SymmetricEncryptor encryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); Socket chatSocket = new Socket(br.readLine(), 12345); BufferedWriter os = new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream()))) {
             String line;
             while (!exit && (line = br.readLine()) != null) {
                 System.out.print("> ");
 
-                // TODO: Encode
-                encryptor.newKey(); //Generates a new once-off session key
-                String cipherText = encryptor.encrypt(line+"\n"); //Encrypt message
-                String key = encryptor.getKey(); //This must be encrypted using the public key of the receiver
-                cipherText+="<key>"+key+"<key>"; //Add key to message
+                String[] encrypted_message = {null, null, null};
 
-                os.write(cipherText+"<end>");
+                // Generates a new once-off session key
+                AES aes = new AES();
+                aes.newKey();
+
+                // Encrypt message with symmetric encryption
+                encrypted_message = aes.encrypt(encrypted_message);
+                System.out.println("Encrypted message: " + Arrays.toString(encrypted_message));
+
+                // Get Secret Key
+                String key = aes.getKey();
+                System.out.println("Secret key: " + key);
+
+                os.write(line + "\n");
                 os.flush();
                 if (line.equals("exit")) {
                     break;

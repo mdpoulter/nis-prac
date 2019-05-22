@@ -1,8 +1,7 @@
 package ClientServer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -25,11 +24,11 @@ public class Server {
     public static void main(String[] args) {
         serverSocket = null;
         Socket chatSocket = null;
-        BufferedReader is = null;
+        ObjectInputStream is = null;
 
         try {
             serverSocket = new ServerSocket(12345);
-            SymmetricEncryptor decryptor = new SymmetricEncryptor("AES/CBC/PKCS5Padding","AES");
+
             System.out.println("Server started");
             System.out.println("Waiting for messages...");
 
@@ -37,30 +36,19 @@ public class Server {
             while (running) {
                 chatSocket = serverSocket.accept();
 
-                is = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+                is = new ObjectInputStream(chatSocket.getInputStream());
+                String[] encrypted_message;
+                while ((encrypted_message = (String[]) is.readObject()) != null) {
 
-                String message;
+                    // Set the secret key and decrypt the message
+                    AES aes = new AES();
+                    aes.setKey(encrypted_message[2]);
+                    encrypted_message = aes.decrypt(encrypted_message, 2);
 
-                while ((message = is.readLine()) != null) {
-                    String[] msgs = message.split("<end>");//splits into messages
-                    StringBuilder msgBuilder = new StringBuilder();
-                    for (String msg : msgs) {
-                        String[] msgKey = msg.split("<key>"); //Split into key and message
-                        //key must be decrypted using servers private key
-                        decryptor.setKey(msgKey[1]);// set the session key
-                        msgBuilder.append(decryptor.decrypt(msgKey[0])); //decrypt message
-                    }
-                    message = msgBuilder.toString();
-
-                    System.out.println("Message received: " + message);
-
-                    running = !message.equals("exit");
-
-                    // TODO: Decode
                 }
             }
         } catch (SocketException ignored) {
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
