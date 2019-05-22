@@ -36,23 +36,27 @@ public class Client {
             while (!exit && (line = br.readLine()) != null) {
 
                 // Hash message
-                String hash = PGP.hashing(line);
+                String hash = Hashing.hash(line);
                 System.out.println("Hashed: " + hash);
 
                 // Encrypt hash
-                String hashEncrypted = RSA.encrypt(hash, clientPrivatekey);
-                System.out.println("Encrypted hash: " + hashEncrypted);
+                hash = RSA.encrypt(hash, clientPrivatekey);
+                System.out.println("Encrypted hash: " + hash);
 
-                String[] encrypted_message = {line, hashEncrypted, null};
+                String[] encrypted_message = {line, hash, null};
 
-                // TODO: Compress
+                // Compress
+                encrypted_message = GZIP.compress(encrypted_message);
+                System.out.println("Compresses message: " + Arrays.toString(encrypted_message));
 
-                // TODO: Symmetric
+                // TODO: Symmetric with output
                 String key = "INSERT SECRET KEY HERE";
 
+                // Encrypt Secret Key
                 String keyEncrypted = RSA.encrypt(key, serverPublicKey);
                 System.out.println("Encrypted SecretKey: " + keyEncrypted);
 
+                // Prepare final message
                 encrypted_message[2] = keyEncrypted;
                 System.out.println("Final encrypted message: " + Arrays.toString(encrypted_message));
 

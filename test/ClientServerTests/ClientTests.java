@@ -1,6 +1,6 @@
 package ClientServerTests;
 
-import ClientServer.PGP;
+import ClientServer.Hashing;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -113,7 +113,7 @@ class ClientTests {
     @DisplayName("Client prints out hash of message")
     @ValueSource(strings = {"Lorem ipsum", "More text...", "CAPITALS", "lowercase", "12345", "!£$%^&*()"})
     void client_prints_out_hash_of_message(String message) {
-        String hash = PGP.hashing(message);
+        String hash = Hashing.hash(message);
 
         sendInput("localhost\n" +
             message + "\n");

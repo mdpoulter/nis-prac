@@ -104,7 +104,7 @@ public class RSA {
         init();
 
         try {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
+            Cipher cipher = Cipher.getInstance("RSA", "BC");
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return Base64.getEncoder().encodeToString(cipher.doFinal(message.getBytes(StandardCharsets.UTF_8)));
         } catch (IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException e) {
@@ -124,7 +124,7 @@ public class RSA {
         init();
 
         try {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
+            Cipher cipher = Cipher.getInstance("RSA", "BC");
             cipher.init(Cipher.DECRYPT_MODE, key);
             return new String(cipher.doFinal(Base64.getDecoder().decode(message)));
         } catch (IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | NoSuchProviderException e) {
