@@ -12,14 +12,14 @@ import java.util.zip.GZIPOutputStream;
  * @author Matthew Poulter
  * @version 2019/05/22
  */
-class GZIP {
+public class GZIP {
     /**
      * Compress an array using GZIP compression
      *
      * @param input The input array
      * @return The compressed array
      */
-    static String[] compress(String[] input) {
+    public static String[] compress(String[] input) {
         String[] output = new String[input.length];
         for (int i = 0; i < input.length; i++) {
             if (input[i] == null) {
@@ -57,7 +57,7 @@ class GZIP {
      * @param input The input array
      * @return The deompressed array
      */
-    static String[] decompress(String[] input) {
+    public static String[] decompress(String[] input) {
         return decompress(input, input.length);
     }
 
@@ -68,7 +68,7 @@ class GZIP {
      * @param max   The maximum number of keys
      * @return The decompressed array
      */
-    static String[] decompress(String[] input, int max) {
+    public static String[] decompress(String[] input, int max) {
         String[] output = new String[input.length];
         for (int i = 0; i < input.length; i++) {
             if (i < max) {
