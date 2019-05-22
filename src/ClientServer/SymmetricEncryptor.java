@@ -35,8 +35,18 @@ public class SymmetricEncryptor{
         this.secureRandom = new SecureRandom();
         byte[] keyBytes = new byte[16];
         this.secureRandom.nextBytes(keyBytes);
-        ivspec = new IvParameterSpec(keyBytes);
-        key = new SecretKeySpec(keyBytes, this.keyAlgorithm);
+        this.ivspec = new IvParameterSpec(keyBytes);
+        this.key = new SecretKeySpec(keyBytes, this.keyAlgorithm);
+    }
+
+    /*
+     *Generates a new key to be used for encryption or decryption
+     */
+    void newKey(){
+        byte[] keyBytes = new byte[16];
+        this.secureRandom.nextBytes(keyBytes);
+        this.ivspec = new IvParameterSpec(keyBytes);
+        this.key = new SecretKeySpec(keyBytes, this.keyAlgorithm);
     }
 
     /*
