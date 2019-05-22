@@ -1,18 +1,23 @@
 package ClientServerTests;
 
+import ClientServer.AES;
 import ClientServer.Client;
+import ClientServer.GZIP;
+import ClientServer.RSA;
 
-import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.security.Key;
+import java.util.Arrays;
 
 class ClientTestHelpers {
     static void smallWait() {
         try {
-            Thread.sleep(200);
+            Thread.sleep(2000);
         } catch (InterruptedException ignored) {
         }
     }
@@ -53,22 +58,41 @@ class ClientTestHelpers {
 
         @Override
         public void run() {
-            BufferedReader is = null;
+            ObjectInputStream is = null;
 
             try {
                 serverSocket = new ServerSocket(12345);
 
                 while (true) {
                     chatSocket = serverSocket.accept();
-                    is = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 
-                    String message;
-                    while ((message = is.readLine()) != null) {
-                        text.append(message);
+                    Key serverPrivatekey = RSA.getKeyFromFile("server", "private");
+                    Key clientPublicKey = RSA.getKeyFromFile("client", "public");
+
+                    is = new ObjectInputStream(chatSocket.getInputStream());
+                    String[] encrypted_message;
+                    while ((encrypted_message = (String[]) is.readObject()) != null) {
+                        text.append(Arrays.toString(encrypted_message)).append("\n");
+
+                        encrypted_message[2] = RSA.decrypt(encrypted_message[2], serverPrivatekey);
+                        text.append(encrypted_message[2]).append("\n");
+
+                        AES aes = new AES();
+                        aes.setKey(encrypted_message[2]);
+                        encrypted_message = aes.decrypt(encrypted_message, 2);
+
+                        encrypted_message = GZIP.decompress(encrypted_message, 2);
+                        text.append(Arrays.toString(encrypted_message)).append("\n");
+                        String message = encrypted_message[0];
+
+                        encrypted_message[1] = RSA.decrypt(encrypted_message[1], clientPublicKey);
+                        text.append(encrypted_message[1]).append("\n");
+
+                        text.append(message).append("\n");
                     }
                 }
-            } catch (SocketException ignored) {
-            } catch (IOException e) {
+            } catch (SocketException | EOFException ignored) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             } finally {
                 try {
