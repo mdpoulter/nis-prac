@@ -5,19 +5,19 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 /**
- * PGP functions
+ * Hashing functions
  *
  * @author Claire Denny
  * @version 2019/05/22
  */
-public class PGP {
+public class Hashing {
 
     /**
      * Hashes an input string to a 128 bit hex string i.e. calculates SHA-512 bit hash.
      *
      * @param message plaintext string
      */
-    public static String hashing(String message) {
+    public static String hash(String message) {
         String hashed = "";
 
         try {
@@ -30,5 +30,5 @@ public class PGP {
         }
 
         return hashed;
-    }//end hashing
+    }//end hash
 }//end class
