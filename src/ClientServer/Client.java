@@ -34,7 +34,6 @@ public class Client {
             String line;
             System.out.print("> ");
             while (!exit && (line = br.readLine()) != null) {
-
                 // Hash message
                 String hash = Hashing.hash(line);
                 System.out.println("Hashed: " + hash);
@@ -49,8 +48,17 @@ public class Client {
                 encrypted_message = GZIP.compress(encrypted_message);
                 System.out.println("Compresses message: " + Arrays.toString(encrypted_message));
 
-                // TODO: Symmetric with output
-                String key = "INSERT SECRET KEY HERE";
+                // Generates a new once-off session key
+                AES aes = new AES();
+                aes.newKey();
+
+                // Encrypt message with symmetric encryption
+                encrypted_message = aes.encrypt(encrypted_message);
+                System.out.println("Encrypted message: " + Arrays.toString(encrypted_message));
+
+                // Get Secret Key
+                String key = aes.getKey();
+                System.out.println("Secret key: " + key);
 
                 // Encrypt Secret Key
                 String keyEncrypted = RSA.encrypt(key, serverPublicKey);

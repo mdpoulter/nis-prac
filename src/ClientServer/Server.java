@@ -46,21 +46,28 @@ public class Server {
                 while ((encrypted_message = (String[]) is.readObject()) != null) {
                     System.out.println("Message received: " + Arrays.toString(encrypted_message));
 
+                    // Decrypt Secret Key
                     encrypted_message[2] = RSA.decrypt(encrypted_message[2], serverPrivatekey);
                     System.out.println("Decrypted key: " + encrypted_message[2]);
 
-                    // TODO: Symmetric
-
+                    // Set the secret key and decrypt the message
+                    AES aes = new AES();
+                    aes.setKey(encrypted_message[2]);
+                    encrypted_message = aes.decrypt(encrypted_message, 2);
+                  
+                    // Decompress
                     encrypted_message = GZIP.decompress(encrypted_message, 2);
                     System.out.println("Decompressed message: " + Arrays.toString(encrypted_message));
                     String message = encrypted_message[0];
 
+                    // Decrypt hash
                     encrypted_message[1] = RSA.decrypt(encrypted_message[1], clientPublicKey);
                     System.out.println("Decrypted hash: " + encrypted_message[1]);
 
                     String hash = Hashing.hash(message);
                     System.out.println("Server calculated hash: " + hash);
 
+                    // Check hash
                     if (encrypted_message[1].equalsIgnoreCase(hash)) {
                         System.out.println("Success! Message was successfully encrypted and decoded with confidentiality and authentication!");
 
