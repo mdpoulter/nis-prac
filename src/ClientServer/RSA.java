@@ -1,5 +1,7 @@
 package ClientServer;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -19,16 +21,22 @@ import java.util.Base64;
  * @version 2019/05/22
  */
 public class RSA {
+    public static void init() {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     /**
      * Generate new set of public and private keys
      *
      * @param args No expected arguments
      */
     public static void main(String[] args) {
+        init();
+
         String[] set = {"server", "client"};
         for (String use : set) {
             try {
-                KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+                KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
                 keyGen.initialize(1024);
                 KeyPair pair = keyGen.generateKeyPair();
 
@@ -42,7 +50,7 @@ public class RSA {
                 fos = new FileOutputStream("keys/" + use + "-privatekey");
                 fos.write(privateKeyBytes);
                 fos.close();
-            } catch (NoSuchAlgorithmException | IOException e) {
+            } catch (NoSuchAlgorithmException | IOException | NoSuchProviderException e) {
                 e.printStackTrace();
             }
         }
@@ -56,6 +64,8 @@ public class RSA {
      * @return The key from the desired file
      */
     static Key getKeyFromFile(String use, String keyType) {
+        init();
+
         Key key = null;
 
         try {
@@ -69,14 +79,14 @@ public class RSA {
             dis.close();
 
 
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
 
             if (keyType.equals("private")) {
                 key = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
             } else {
                 key = keyFactory.generatePublic(new X509EncodedKeySpec(keyBytes));
             }
-        } catch (NoSuchAlgorithmException | IOException | InvalidKeySpecException e) {
+        } catch (NoSuchAlgorithmException | IOException | InvalidKeySpecException | NoSuchProviderException e) {
             e.printStackTrace();
         }
 
@@ -91,11 +101,13 @@ public class RSA {
      * @return The encrypted string
      */
     static String encrypt(String message, Key key) {
+        init();
+
         try {
-            Cipher cipher = Cipher.getInstance("RSA");
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return Base64.getEncoder().encodeToString(cipher.doFinal(message.getBytes(StandardCharsets.UTF_8)));
-        } catch (IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
+        } catch (IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException e) {
             e.printStackTrace();
         }
         return null;
@@ -109,11 +121,13 @@ public class RSA {
      * @return The decrypted string
      */
     static String decrypt(String message, Key key) {
+        init();
+
         try {
-            Cipher cipher = Cipher.getInstance("RSA");
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
             cipher.init(Cipher.DECRYPT_MODE, key);
             return new String(cipher.doFinal(Base64.getDecoder().decode(message)));
-        } catch (IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException e) {
+        } catch (IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | NoSuchProviderException e) {
             e.printStackTrace();
         }
         return null;
