@@ -68,7 +68,7 @@ public class GZIP {
      * @param max   The maximum number of keys
      * @return The decompressed array
      */
-    public static String[] decompress(String[] input, int max) {
+    static String[] decompress(String[] input, int max) {
         String[] output = new String[input.length];
         for (int i = 0; i < input.length; i++) {
             if (i < max) {
