@@ -27,10 +27,13 @@ public class Client {
             while (!exit && (line = br.readLine()) != null) {
                 System.out.print("> ");
 
+                // Hash message
+                line = PGP.hashing(line);
+                System.out.println("Hashed: " + line);
+
                 // TODO: Encode
-                line = PGP.hashing(line); //hash message
 
-
+                System.out.println("Sending to server: " + line);
                 os.write(line + "\n");
                 os.flush();
                 if (line.equals("exit")) {
