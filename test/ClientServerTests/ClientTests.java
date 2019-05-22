@@ -1,6 +1,5 @@
 package ClientServerTests;
 
-import ClientServer.AES;
 import ClientServer.Hashing;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +12,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import static ClientServerTests.ClientTestHelpers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The client application tests
@@ -86,36 +86,11 @@ class ClientTests {
     void client_sends_message_to_server(String message) {
         sendInput("localhost\n" +
             message + "\n");
-        AES decryptor = new AES();
+
         client.start();
         smallWait();
-        String rcvMsg = ServerTestThread.getReceivedText();
-        String[] msg = rcvMsg.split("<key>");
-        decryptor.setKey(msg[1]);
-        rcvMsg = decryptor.decrypt(msg[0]);
-        assertTrue(rcvMsg.contains(message));
-    }
 
-    @Test
-    @DisplayName("Test basic encryption and decryption")
-    void encrypt_the_decrypt(){
-        String orl = "Hello World";
-        AES encryptor = new AES();
-        String plainText = encryptor.decrypt(encryptor.encrypt(orl));
-        assertEquals(plainText,orl);
-    }
-
-    @Test
-    @DisplayName("Decrypt cipher with given key")
-    void decrypt_cipher_with_key(){
-        AES encryptor = new AES();
-        AES decryptor = new AES();
-        String orl = "Hello World";
-        String cipherText = encryptor.encrypt(orl);
-        String key = encryptor.getKey();
-        decryptor.setKey(key);
-        String plainText = decryptor.decrypt(cipherText);
-        assertEquals(plainText,orl);
+        assertTrue(ServerTestThread.getReceivedText().contains(message));
     }
 
     @ParameterizedTest
@@ -127,24 +102,11 @@ class ClientTests {
             message2 + "\n");
 
         client.start();
-        for (int i=0;i<10;++i) {
-            smallWait();
-        }
-        AES decryptor = new AES();
+        smallWait();
 
-        String rcv = ServerTestThread.getReceivedText();
-        StringBuilder plainBuild = new StringBuilder();
-        String[] msgs = rcv.split("<end>");
-        for (String msg : msgs) {
-            String[] msgKey = msg.split("<key>"); //Split into key and message
-            //key must be decrypted using servers private key
-            decryptor.setKey(msgKey[1]);// set the session key
-            plainBuild.append(decryptor.decrypt(msgKey[0])); //decrypt message
-        }
-        String plain = plainBuild.toString();
-        assertTrue(plain.contains(message1));
-        assertTrue(plain.contains(message2));
-        assertTrue(plain.indexOf(message1) < plain.indexOf(message2));
+        assertTrue(ServerTestThread.getReceivedText().contains(message1));
+        assertTrue(ServerTestThread.getReceivedText().contains(message2));
+        assertTrue(ServerTestThread.getReceivedText().indexOf(message1) < ServerTestThread.getReceivedText().indexOf(message2));
     }
 
     @ParameterizedTest
@@ -159,6 +121,6 @@ class ClientTests {
         client.start();
         smallWait();
 
-        assertTrue(systemOutContent.toString().contains("Hashed: " + hash));
+        assertTrue(systemOutContent.toString().contains(hash));
     }
 }

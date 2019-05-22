@@ -5,7 +5,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 
 import static ClientServerTests.ServerTestHelpers.*;
@@ -57,8 +60,8 @@ class ServerTests {
     @Test
     @DisplayName("Server exits when 'exit' message sent")
     void server_exits_on_command() {
-        try (Socket chatSocket = new Socket("localhost", 12345); BufferedWriter os = new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream()))) {
-            os.write("exit\n");
+        try (Socket chatSocket = new Socket("localhost", 12345); ObjectOutputStream os = new ObjectOutputStream(chatSocket.getOutputStream())) {
+            os.writeObject(ServerTestHelpers.prepareMessage("exit"));
             os.flush();
         } catch (IOException ignored) {
         }
@@ -71,9 +74,9 @@ class ServerTests {
     @DisplayName("Server receives and outputs message as is")
     @ValueSource(strings = {"Lorem ipsum", "More text...", "CAPITALS", "lowercase", "12345", "!£$%^&*()"})
     void server_receives_message_and_outputs_it(String message) {
-        try (Socket chatSocket = new Socket("localhost", 12345); BufferedWriter os = new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream()))) {
-            os.write(message + "\n");
-            os.write("exit\n");
+        try (Socket chatSocket = new Socket("localhost", 12345); ObjectOutputStream os = new ObjectOutputStream(chatSocket.getOutputStream())) {
+            os.writeObject(ServerTestHelpers.prepareMessage(message));
+            os.writeObject(ServerTestHelpers.prepareMessage("exit"));
             os.flush();
         } catch (IOException ignored) {
         }
@@ -82,17 +85,17 @@ class ServerTests {
             assert true;
         }
 
-        assertTrue(systemOutContent.toString().contains("Message received: " + message));
+        assertTrue(systemOutContent.toString().contains(message));
     }
 
     @ParameterizedTest
     @DisplayName("Server receives and outputs multiple messages as is and in order")
     @CsvSource({"Lorem ipsum,More text...", "CAPITALS,lowercase", "12345,!£$%^&*()"})
     void server_receives_multiple_messages_and_outputs_them_in_order(String message1, String message2) {
-        try (Socket chatSocket = new Socket("localhost", 12345); BufferedWriter os = new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream()))) {
-            os.write(message1 + "\n");
-            os.write(message2 + "\n");
-            os.write("exit\n");
+        try (Socket chatSocket = new Socket("localhost", 12345); ObjectOutputStream os = new ObjectOutputStream(chatSocket.getOutputStream())) {
+            os.writeObject(ServerTestHelpers.prepareMessage(message1));
+            os.writeObject(ServerTestHelpers.prepareMessage(message2));
+            os.writeObject(ServerTestHelpers.prepareMessage("exit"));
             os.flush();
         } catch (IOException ignored) {
         }
@@ -101,9 +104,9 @@ class ServerTests {
             assert true;
         }
 
-        assertTrue(systemOutContent.toString().contains("Message received: " + message1));
-        assertTrue(systemOutContent.toString().contains("Message received: " + message2));
-        assertTrue(systemOutContent.toString().indexOf("Message received: " + message1) < systemOutContent.toString().indexOf("Message received: " + message2));
+        assertTrue(systemOutContent.toString().contains(message1));
+        assertTrue(systemOutContent.toString().contains(message2));
+        assertTrue(systemOutContent.toString().indexOf(message1) < systemOutContent.toString().indexOf(message2));
     }
 
 

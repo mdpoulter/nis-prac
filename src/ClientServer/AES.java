@@ -45,7 +45,7 @@ public class AES {
     /**
      * Generates a new key to be used for encryption or decryption
      */
-    void newKey() {
+    public void newKey() {
         byte[] keyBytes = new byte[16];
         this.secureRandom.nextBytes(keyBytes);
         this.ivspec = new IvParameterSpec(keyBytes);
