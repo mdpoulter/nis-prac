@@ -63,7 +63,7 @@ public class RSA {
      * @param keyType The key type: "publickey" or "privatekey"
      * @return The key from the desired file
      */
-    static Key getKeyFromFile(String use, String keyType) {
+    public static Key getKeyFromFile(String use, String keyType) {
         init();
 
         Key key = null;
@@ -100,7 +100,7 @@ public class RSA {
      * @param key     The key to encrypt with
      * @return The encrypted string
      */
-    static String encrypt(String message, Key key) {
+    public static String encrypt(String message, Key key) {
         init();
 
         try {
@@ -120,7 +120,7 @@ public class RSA {
      * @param key     The key to decrypt with
      * @return The decrypted string
      */
-    static String decrypt(String message, Key key) {
+    public static String decrypt(String message, Key key) {
         init();
 
         try {
