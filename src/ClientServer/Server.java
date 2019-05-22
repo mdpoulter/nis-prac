@@ -1,14 +1,11 @@
 package ClientServer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.nio.ByteBuffer;
 import java.security.Key;
-import java.security.KeyPair;
 
 /**
  * The server application
@@ -28,8 +25,7 @@ public class Server {
     public static void main(String[] args) {
         serverSocket = null;
         Socket chatSocket = null;
-        BufferedReader is = null;
-
+        ObjectInputStream is = null;
 
         try {
             serverSocket = new ServerSocket(12345);
@@ -41,35 +37,35 @@ public class Server {
             while (running) {
                 chatSocket = serverSocket.accept();
 
-                //Create public and private key pair
-                KeyPair serverKeyPair = AsymmetricEncryption.getKeyPair();
+                Key serverPrivatekey = RSA.getKeyFromFile("server", "private");
+                Key clientPublicKey = RSA.getKeyFromFile("client", "public");
 
-                //Send Server Public Key
-                AsymmetricEncryption.sendKey(chatSocket, serverKeyPair);
-
-                //Receive Client Private Key
-                Key clientPublicKey = AsymmetricEncryption.recieveKey(chatSocket);
-
-
-
-                is = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+                is = new ObjectInputStream(chatSocket.getInputStream());
                 String message;
-                while ((message = is.readLine()) != null) {
+                while ((message = (String) is.readObject()) != null) {
+                    System.out.println("Message received: " + message);
+
+                    String key = "INSERT KEY HERE";
+
+                    String decryptedKey = RSA.decrypt(key, serverPrivatekey);
+
+                    // TODO: Symmetric
+
+                    // TODO: Compression
+                    String hash = "INSERT HASH HERE";
+                    String decryptedHash = RSA.decrypt(hash, clientPublicKey);
+
                     // TODO: Decode
 
-                    //String decryptedKey = AsymmetricEncryption.decrypt(key, serverKeyPair.getPrivate());
-
-                    //String decryptedHash = AsymmetricEncryption.decrypt(hash, clientPublicKey());
-
-                    System.out.println("Message received: " + message);
                     running = !message.equals("exit");
+                    if (!running) {
+                        break;
+                    }
                 }
             }
         } catch (SocketException ignored) {
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-        e.printStackTrace();
         } finally {
             try {
                 if (is != null) {

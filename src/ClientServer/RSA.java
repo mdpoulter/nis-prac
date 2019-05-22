@@ -1,13 +1,22 @@
 package ClientServer;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 /**
+ * AsymmetricEncryption
  *
+ * @author Duncan Campbell
+ * @version 2019/05/22
  */
 public class RSA {
     /**
@@ -46,7 +55,7 @@ public class RSA {
      * @param keyType The key type: "publickey" or "privatekey"
      * @return The key from the desired file
      */
-    Key getKeyFromFile(String use, String keyType) {
+    static Key getKeyFromFile(String use, String keyType) {
         Key key = null;
 
         try {
@@ -72,5 +81,41 @@ public class RSA {
         }
 
         return key;
+    }
+
+    /**
+     * Encrypt a message input with the desired key
+     *
+     * @param message The message to be encrypted
+     * @param key     The key to encrypt with
+     * @return The encrypted string
+     */
+    static String encrypt(String message, Key key) {
+        try {
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return Base64.getEncoder().encodeToString(cipher.doFinal(message.getBytes(StandardCharsets.UTF_8)));
+        } catch (IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Decrypt a message input with the desired key
+     *
+     * @param message The message to be decrypted
+     * @param key     The key to decrypt with
+     * @return The decrypted string
+     */
+    static String decrypt(String message, Key key) {
+        try {
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(message)));
+        } catch (IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
