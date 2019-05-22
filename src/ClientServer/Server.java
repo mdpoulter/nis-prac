@@ -53,15 +53,24 @@ public class Server {
 
                     encrypted_message = GZIP.decompress(encrypted_message, 2);
                     System.out.println("Decompressed message: " + Arrays.toString(encrypted_message));
+                    String message = encrypted_message[0];
 
                     encrypted_message[1] = RSA.decrypt(encrypted_message[1], clientPublicKey);
                     System.out.println("Decrypted hash: " + encrypted_message[1]);
 
-                    // TODO: Decode with output:
-                    String original_message = "";
+                    String hash = Hashing.hash(message);
+                    System.out.println("Server calculated hash: " + hash);
 
-                    if (!(running = !original_message.equals("exit"))) {
-                        break;
+                    if (encrypted_message[1].equalsIgnoreCase(hash)) {
+                        System.out.println("Success! Message was successfully encrypted and decoded with confidentiality and authentication!");
+
+                        System.out.println("Unencrypted message: " + message);
+
+                        if (!(running = !message.equals("exit"))) {
+                            break;
+                        }
+                    } else {
+                        System.out.println("Failure in checking confidentiality and authentication!");
                     }
                 }
             }
