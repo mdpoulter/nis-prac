@@ -35,9 +35,11 @@ public class Client {
             System.out.print("> ");
             while (!exit && (line = br.readLine()) != null) {
 
-                // TODO: Encode
-                String hash = "INSERT HASH HERE";
+                // Hash message
+                String hash = PGP.hashing(line);
+                System.out.println("Hashed: " + hash);
 
+                // Encrypt hash
                 String hashEncrypted = RSA.encrypt(hash, clientPrivatekey);
                 System.out.println("Encrypted hash: " + hashEncrypted);
 

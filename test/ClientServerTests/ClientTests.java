@@ -1,5 +1,6 @@
 package ClientServerTests;
 
+import ClientServer.PGP;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -106,5 +107,20 @@ class ClientTests {
         assertTrue(ServerTestThread.getReceivedText().contains(message1));
         assertTrue(ServerTestThread.getReceivedText().contains(message2));
         assertTrue(ServerTestThread.getReceivedText().indexOf(message1) < ServerTestThread.getReceivedText().indexOf(message2));
+    }
+
+    @ParameterizedTest
+    @DisplayName("Client prints out hash of message")
+    @ValueSource(strings = {"Lorem ipsum", "More text...", "CAPITALS", "lowercase", "12345", "!£$%^&*()"})
+    void client_prints_out_hash_of_message(String message) {
+        String hash = PGP.hashing(message);
+
+        sendInput("localhost\n" +
+            message + "\n");
+
+        client.start();
+        smallWait();
+
+        assertTrue(systemOutContent.toString().contains("Hashed: " + hash));
     }
 }
