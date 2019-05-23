@@ -1,0 +1,71 @@
+#############################################
+#											#
+# NIS Makefile								#
+#											#
+# @author Matthew Poulter (PLTMAT001)		#
+# @version 1.1, 23 May 2019					#
+#											#
+#############################################
+
+# Variables
+JAVAC := /usr/bin/javac
+JAVA := /usr/bin/java
+JAVADOC := /usr/bin/javadoc
+LIB := lib:lib/*:lib/bcprov-jdk15on-1.61.jar
+SRC := src
+BIN := bin
+TESTBIN := testbin
+DOC := docs
+TEST := test
+SRC_F := $(wildcard src/ClientServer/*.java)
+TEST_F := $(wildcard test/ClientServerTests/*.java)
+
+LIST := $(SRC_F:$(SRC)/ClientServer/%.java=$(BIN)/ClientServer/%.class)
+TESTLIST := $(TEST_F:$(TEST)/ClientServerTests/%.java=$(TESTBIN)/ClientServerTests/%.class)
+
+.PHONY: all test clean
+
+# Default - make
+all: setup $(LIST) $(TESTLIST) complete
+
+# Clean
+clean:
+	@rm -R $(BIN) $(TESTBIN) $(DOC)
+
+# Setup
+setup:
+	@echo Compiling...
+	@mkdir -p $(BIN) $(TESTBIN) $(DOC)
+
+# Build
+$(BIN)/ClientServer/%.class: $(SRC)/ClientServer/%.java | $(BIN)
+	@$(JAVAC) -cp $(LIB):$(BIN):$(SRC) -sourcepath $(SRC) -g -d $| $<
+
+# Build Tests
+$(TESTBIN)/ClientServerTests/%.class: $(TEST)/ClientServerTests/%.java | $(TESTBIN)
+	@$(JAVAC) -cp $(LIB):$(BIN):$(TESTBIN):$(SRC):$(TEST) -sourcepath $(TEST) -g -d $| $<
+
+# Complete
+complete:
+	@echo Complete!
+	
+# Docs	
+docs: all
+	@echo Generating docs...
+	@$(JAVADOC) -quiet -cp $(LIB):$(BIN) -sourcepath $(SRC) -d $(DOC) $(SRC_F)
+	@echo Complete!
+
+# Test
+test:
+	@echo Running tests
+	@echo Please be patient...
+	@$(JAVA) -jar lib/junit-platform-console-standalone-1.4.0.jar -cp $(LIB):$(BIN):$(TESTBIN) -p ClientServerTests
+	@echo Complete!
+
+# Run server
+server:
+	@$(JAVA) -cp $(LIB):$(BIN) ClientServer/Server
+
+# Run client
+client:
+	@$(JAVA) -cp $(LIB):$(BIN) ClientServer/Client

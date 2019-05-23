@@ -5,6 +5,17 @@
 
 This is the repository for our CSC4012Z practical assignment. If you want to contribute, please review the [Contributing](/CONTRIBUTING.md) file.
 
+### Running the application
+From the terminal
+```
+make			# Compile the application
+make test		# Run the tests
+make server		# Run the server
+make client		# Run the client
+make clean		# Clean the folder
+make docs		# Make the javadocs
+```
+
 ### Brief task description
 The objective is to simulate/replicate the message confidentiality and authentication aspects of PGP.
 
