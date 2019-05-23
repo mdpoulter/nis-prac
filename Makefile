@@ -1,9 +1,9 @@
 #############################################
 #											#
-# NIS Makefile						#
+# NIS Makefile								#
 #											#
 # @author Matthew Poulter (PLTMAT001)		#
-# @version 1.0, 13 May 2019				#
+# @version 1.1, 23 May 2019					#
 #											#
 #############################################
 
@@ -11,40 +11,39 @@
 JAVAC := /usr/bin/javac
 JAVA := /usr/bin/java
 JAVADOC := /usr/bin/javadoc
-TIME := /usr/bin/time
-LIB := lib:lib/*
-JCA := lib/jacocoagent.jar
+LIB := lib:lib/*:lib/bcprov-jdk15on-1.61.jar
 SRC := src
 BIN := bin
-DOC := doc
+TESTBIN := testbin
+DOC := docs
 TEST := test
-COV := coverage
-SRC_F := $(wildcard src/*.java)
-TEST_F := $(wildcard test/*.java)
+SRC_F := $(wildcard src/ClientServer/*.java)
+TEST_F := $(wildcard test/ClientServerTests/*.java)
 
-LIST := $(SRC_F:$(SRC)/%.java=$(BIN)/%.class)
+LIST := $(SRC_F:$(SRC)/ClientServer/%.java=$(BIN)/ClientServer/%.class)
+TESTLIST := $(TEST_F:$(TEST)/ClientServerTests/%.java=$(TESTBIN)/ClientServerTests/%.class)
+
+.PHONY: all test clean
 
 # Default - make
-all: setup $(LIST) complete
-
-# Make server
-#server:
-
-#Make client
-#client: 
+all: setup $(LIST) $(TESTLIST) complete
 
 # Clean
 clean:
-	@rm -rf $(BIN)/*.class $(DOC)/* $(TEST)/*.class $(COV) jacoco.exec
+	@rm -R $(BIN) $(TESTBIN) $(DOC)
 
 # Setup
 setup:
 	@echo Compiling...
-	@mkdir -p $(BIN) $(DOC) $(COV)
+	@mkdir -p $(BIN) $(TESTBIN) $(DOC)
 
 # Build
-$(BIN)/%.class: $(SRC)/%.java | $(BIN)
-	@$(JAVAC) -cp $(BIN) -sourcepath $(SRC) -g -d $| $<
+$(BIN)/ClientServer/%.class: $(SRC)/ClientServer/%.java | $(BIN)
+	@$(JAVAC) -cp $(LIB):$(BIN):$(SRC) -sourcepath $(SRC) -g -d $| $<
+
+# Build Tests
+$(TESTBIN)/ClientServerTests/%.class: $(TEST)/ClientServerTests/%.java | $(TESTBIN)
+	@$(JAVAC) -cp $(LIB):$(BIN):$(TESTBIN):$(SRC):$(TEST) -sourcepath $(TEST) -g -d $| $<
 
 # Complete
 complete:
@@ -53,27 +52,20 @@ complete:
 # Docs	
 docs: all
 	@echo Generating docs...
-	@$(JAVADOC) -quiet -cp $(BIN) -sourcepath $(SRC) -d $(DOC) $(SRC_F)
+	@$(JAVADOC) -quiet -cp $(LIB):$(BIN) -sourcepath $(SRC) -d $(DOC) $(SRC_F)
 	@echo Complete!
 
 # Test
-test: 
+test:
 	@echo Running tests
-	$JAVA_HOME/bin/java -jar lib\junit-platform-console-standalone-1.4.0.jar -cp "out\production\nis-prac;out\test\nis-prac" -c ClientServerTests.ServerTests
-	@echo Complete!
-#junit: all
-	#@echo Running tests...
-	#@$(JAVAC) -cp $(BIN):$(TEST):$(LIB) -sourcepath $(TEST) -g -d $(TEST) $(TEST)/SearchAVLTest.java
-	#@$(JAVA) -ea -cp $(BIN):$(TEST):$(LIB) org.junit.runner.JUnitCore SearchAVLTest
-	#@echo Complete!
-	
-# Coverage
-jacoco: junit
-	@echo Running coverage...
-	@$(JAVA) -ea -javaagent:$(JCA) -cp $(BIN):$(TEST):$(LIB) org.junit.runner.JUnitCore ClientServerTests.ServerTests
-	@$(JAVA) -cp $(BIN):$(TEST):$(LIB) Report --reporttype html --target coverage .
+	@echo Please be patient...
+	@$(JAVA) -jar lib/junit-platform-console-standalone-1.4.0.jar -cp $(LIB):$(BIN):$(TESTBIN) -p ClientServerTests
 	@echo Complete!
 
-# Run
-#%.run:
-	#@$(TIME) --format="Duration: %E" $(JAVA) -cp $(BIN) $(patsubst %.run,%,$@)
+# Run server
+server:
+	@$(JAVA) -cp $(LIB):$(BIN) ClientServer/Server
+
+# Run client
+client:
+	@$(JAVA) -cp $(LIB):$(BIN) ClientServer/Client
