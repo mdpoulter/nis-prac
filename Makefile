@@ -15,6 +15,7 @@ LIB := lib:lib/*:lib/bcprov-jdk15on-1.61.jar
 SRC := src
 BIN := bin
 TESTBIN := testbin
+KEYS := keys
 DOC := docs
 TEST := test
 SRC_F := $(wildcard src/ClientServer/*.java)
@@ -23,19 +24,19 @@ TEST_F := $(wildcard test/ClientServerTests/*.java)
 LIST := $(SRC_F:$(SRC)/ClientServer/%.java=$(BIN)/ClientServer/%.class)
 TESTLIST := $(TEST_F:$(TEST)/ClientServerTests/%.java=$(TESTBIN)/ClientServerTests/%.class)
 
-.PHONY: all test clean
+.PHONY: all test clean keys server client
 
 # Default - make
-all: setup $(LIST) $(TESTLIST) complete
+all: setup $(LIST) $(TESTLIST) keys complete
 
 # Clean
 clean:
-	@rm -R $(BIN) $(TESTBIN) $(DOC)
+	@rm -R $(BIN) $(TESTBIN) $(DOC) $(KEYS)
 
 # Setup
 setup:
 	@echo Compiling...
-	@mkdir -p $(BIN) $(TESTBIN) $(DOC)
+	@mkdir -p $(BIN) $(TESTBIN) $(DOC) $(KEYS)
 
 # Build
 $(BIN)/ClientServer/%.class: $(SRC)/ClientServer/%.java | $(BIN)
@@ -50,7 +51,7 @@ complete:
 	@echo Complete!
 	
 # Docs	
-docs: all
+docs:
 	@echo Generating docs...
 	@$(JAVADOC) -quiet -cp $(LIB):$(BIN) -sourcepath $(SRC) -d $(DOC) $(SRC_F)
 	@echo Complete!
@@ -69,3 +70,8 @@ server:
 # Run client
 client:
 	@$(JAVA) -cp $(LIB):$(BIN) ClientServer/Client
+
+# Generate new keys
+keys:
+	@echo Generating new public and private keys
+	@$(JAVA) -cp $(LIB):$(BIN) ClientServer/RSA
