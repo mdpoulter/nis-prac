@@ -25,7 +25,7 @@ class ServerTestHelpers {
 
     static void smallWait() {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(2500);
         } catch (InterruptedException ignored) {
         }
     }

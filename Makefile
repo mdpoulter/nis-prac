@@ -36,7 +36,7 @@ clean:
 # Setup
 setup:
 	@echo Compiling...
-	@mkdir -p $(BIN) $(TESTBIN) $(DOC) $(KEYS)
+	@mkdir -p $(BIN)/ClientServer $(TESTBIN)/ClientServerTests $(DOC) $(KEYS)
 
 # Build
 $(BIN)/%.class: $(SRC)/%.java | $(BIN)

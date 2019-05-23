@@ -6,7 +6,7 @@
 This is the repository for our CSC4012Z practical assignment. If you want to contribute, please review the [Contributing](/CONTRIBUTING.md) file.
 
 ### Running the application
-From the terminal
+All the make commands from the bash terminal:
 ```
 make			# Compile the application
 make keys		# Generate new public and private keys
@@ -16,6 +16,18 @@ make client		# Run the client
 make clean		# Clean the folder
 make docs		# Make the javadocs
 ```
+
+To get the application running, use:
+```
+make
+make server
+make client		# In a separate terminal
+```
+
+When running the client, enter the server address as "localhost" when running on the same system as the server. You can use the message "exit" from the client to close both the client and the server.
+
+Note: Occasionally, you will need to run make twice if an error occurs.
+
 
 ### Brief task description
 The objective is to simulate/replicate the message confidentiality and authentication aspects of PGP.
