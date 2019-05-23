@@ -9,6 +9,7 @@ This is the repository for our CSC4012Z practical assignment. If you want to con
 From the terminal
 ```
 make			# Compile the application
+make keys		# Generate new public and private keys
 make test		# Run the tests
 make server		# Run the server
 make client		# Run the client
