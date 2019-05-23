@@ -21,8 +21,8 @@ TEST := test
 SRC_F := $(wildcard src/ClientServer/*.java)
 TEST_F := $(wildcard test/ClientServerTests/*.java)
 
-LIST := $(SRC_F:$(SRC)/ClientServer/%.java=$(BIN)/ClientServer/%.class)
-TESTLIST := $(TEST_F:$(TEST)/ClientServerTests/%.java=$(TESTBIN)/ClientServerTests/%.class)
+LIST := $(SRC_F:$(SRC)/%.java=$(BIN)/%.class)
+TESTLIST := $(TEST_F:$(TEST)/%.java=$(TESTBIN)/%.class)
 
 .PHONY: all test clean keys server client
 
@@ -39,11 +39,11 @@ setup:
 	@mkdir -p $(BIN) $(TESTBIN) $(DOC) $(KEYS)
 
 # Build
-$(BIN)/ClientServer/%.class: $(SRC)/ClientServer/%.java | $(BIN)
+$(BIN)/%.class: $(SRC)/%.java | $(BIN)
 	@$(JAVAC) -cp $(LIB):$(BIN):$(SRC) -sourcepath $(SRC) -g -d $| $<
 
 # Build Tests
-$(TESTBIN)/ClientServerTests/%.class: $(TEST)/ClientServerTests/%.java | $(TESTBIN)
+$(TESTBIN)/%.class: $(TEST)/%.java | $(TESTBIN)
 	@$(JAVAC) -cp $(LIB):$(BIN):$(TESTBIN):$(SRC):$(TEST) -sourcepath $(TEST) -g -d $| $<
 
 # Complete
